@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0f0f23">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="TriviaWiki">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧠</text></svg>">
+  <title>Trivia Master Wiki</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Offline Banner -->
+  <div id="offline-banner" class="offline-banner">📡 Sin conexión - Las preguntas requieren Internet</div>
+
+  <!-- Install Banner -->
+  <div id="install-banner" class="install-banner">
+    <p>📲 Instala Trivia Master Wiki en tu dispositivo</p>
+    <div class="install-buttons">
+      <button class="btn btn-primary btn-small" id="btn-install">Instalar</button>
+      <button class="btn btn-secondary btn-small" id="btn-install-close">Ahora no</button>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Confetti Container -->
+  <div id="confetti-container" class="confetti-container"></div>
+
+  <!-- ===== APP ===== -->
+  <div id="app">
+
+    <!-- ========== HOME ========== -->
+    <div id="page-home" class="page active">
+      <div class="logo">🧠</div>
+      <h1 class="title">Trivia Master Wiki</h1>
+      <p class="subtitle">Pon a prueba tu conocimiento con Wikipedia</p>
+      <div class="home-menu">
+        <button class="btn btn-primary" data-page="game-setup">🎮 Jugar</button>
+        <button class="btn btn-secondary" data-page="ranking">🏆 Ranking</button>
+        <button class="btn btn-secondary" data-page="achievements">⭐ Logros</button>
+        <button class="btn btn-secondary" data-page="settings">⚙️ Configuración</button>
+        <button class="btn btn-secondary" data-page="stats">📊 Estadísticas</button>
+      </div>
+      <div class="home-stats-bar">
+        <span class="stat-item">🪙 <span id="home-coins">0</span></span>
+        <span class="stat-item">🔥 <span id="home-best-score">0</span></span>
+      </div>
+    </div>
+
+    <!-- ========== GAME SETUP ========== -->
+    <div id="page-game-setup" class="page">
+      <div class="page-header">
+        <button class="back-btn" data-page="home">← Volver</button>
+        <h2>Configurar Partida</h2>
+        <div class="coins-display">🪙 <span id="setup-coins">0</span></div>
+      </div>
+
+      <!-- Modo -->
+      <div class="setup-section">
+        <h3>Modo de Juego</h3>
+        <div class="mode-cards">
+          <div class="mode-card selected" data-mode="random">
+            <span class="mode-icon">🎲</span>
+            <div class="mode-info">
+              <h4>Aleatorio</h4>
+              <p>Artículos al azar de Wikipedia</p>
+            </div>
+          </div>
+          <div class="mode-card" data-mode="category">
+            <span class="mode-icon">📂</span>
+            <div class="mode-info">
+              <h4>Categorías</h4>
+              <p>Elige una categoría específica</p>
+            </div>
+          </div>
+          <div class="mode-card" data-mode="custom">
+            <span class="mode-icon">✏️</span>
+            <div class="mode-info">
+              <h4>Personalizado</h4>
+              <p>Escribe tu propio tema</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Categorías -->
+      <div class="setup-section" id="setup-categories" style="display:none;">
+        <h3>Categoría</h3>
+        <div class="category-grid">
+          <button class="category-btn selected" data-category="Historia">📜 Historia</button>
+          <button class="category-btn" data-category="Geografía">🌍 Geografía</button>
+          <button class="category-btn" data-category="Ciencia">🔬 Ciencia</button>
+          <button class="category-btn" data-category="Tecnología">💻 Tecnología</button>
+          <button class="category-btn" data-category="Matemáticas">📐 Matemáticas</button>
+          <button class="category-btn" data-category="Deportes">⚽ Deportes</button>
+          <button class="category-btn" data-category="Música">🎵 Música</button>
+          <button class="category-btn" data-category="Cine">🎬 Cine</button>
+          <button class="category-btn" data-category="Cultura General">📖 Cultura General</button>
+        </div>
+      </div>
+
+      <!-- Personalizado -->
+      <div class="setup-section" id="setup-custom" style="display:none;">
+        <h3>Tema Personalizado</h3>
+        <div class="custom-input-wrap">
+          <input type="text" id="custom-topic" placeholder="Ej: Colombia, Linux, Minecraft..." maxlength="50">
+          <button class="btn btn-primary btn-small" id="btn-use-topic">Usar</button>
+        </div>
+      </div>
+
+      <!-- Cantidad -->
+      <div class="setup-section">
+        <h3>Cantidad de Preguntas</h3>
+        <div class="setup-grid">
+          <button class="setup-option" data-count="10">10</button>
+          <button class="setup-option selected" data-count="20">20</button>
+          <button class="setup-option" data-count="50">50</button>
+          <button class="setup-option" data-count="0">♾️ Infinitas</button>
+        </div>
+      </div>
+
+      <!-- Dificultad -->
+      <div class="setup-section">
+        <h3>Dificultad</h3>
+        <div class="setup-grid">
+          <button class="setup-option" data-difficulty="easy">😊 Fácil</button>
+          <button class="setup-option selected" data-difficulty="medium">🤔 Media</button>
+          <button class="setup-option" data-difficulty="hard">😈 Difícil</button>
+        </div>
+      </div>
+
+      <!-- Temporizador -->
+      <div class="setup-section">
+        <h3>Temporizador</h3>
+        <div class="settings-row" style="justify-content:center;gap:12px;">
+          <span class="setting-label">⏱️ Tiempo regresivo</span>
+          <div class="toggle-switch active" id="toggle-timer"></div>
+          <span class="setting-label" style="color:var(--text-muted)">Sin límite</span>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="btn-start-game">🚀 ¡Comenzar!</button>
+    </div>
+
+    <!-- ========== GAME PLAY ========== -->
+    <div id="page-game-play" class="page">
+      <div class="game-header">
+        <div class="game-header-left">
+          <span class="game-question-counter" id="question-counter">1/10</span>
+          <span class="game-score" id="game-score">0</span>
+        </div>
+        <div class="game-lives" id="game-lives">❤️❤️❤️</div>
+        <div class="game-coins" id="game-coins">🪙 0</div>
+      </div>
+      <div class="timer-container">
+        <div class="timer-bar" id="timer-bar"></div>
+      </div>
+      <div class="question-area" id="question-area">
+        <!-- Question content injected by JS -->
+      </div>
+      <div class="help-bar">
+        <button class="help-btn" id="help-5050" title="Elimina 2 respuestas incorrectas">
+          <span class="help-icon">✂️</span>
+          50/50
+          <span class="help-cost">🪙20</span>
+        </button>
+        <button class="help-btn" id="help-hint" title="Muestra una pista">
+          <span class="help-icon">💡</span>
+          Pista
+          <span class="help-cost">🪙15</span>
+        </button>
+        <button class="help-btn" id="help-audience" title="Consulta al público">
+          <span class="help-icon">👥</span>
+          Público
+          <span class="help-cost">🪙25</span>
+        </button>
+        <button class="help-btn" id="help-freeze" title="+15 segundos">
+          <span class="help-icon">❄️</span>
+          Congelar
+          <span class="help-cost">🪙30</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ========== GAME OVER ========== -->
+    <div id="page-game-over" class="page">
+      <div class="game-over-icon">🏆</div>
+      <h2 class="game-over-title">¡Partida Completada!</h2>
+      <div class="game-over-score" id="go-score">0</div>
+      <p class="subtitle" id="go-subtitle">¡Buen trabajo!</p>
+      <div class="game-over-stats">
+        <div class="game-over-stat">
+          <span class="stat-value" id="go-correct">0</span>
+          <span class="stat-label">Correctas</span>
+        </div>
+        <div class="game-over-stat">
+          <span class="stat-value" id="go-incorrect">0</span>
+          <span class="stat-label">Incorrectas</span>
+        </div>
+        <div class="game-over-stat">
+          <span class="stat-value" id="go-accuracy">0%</span>
+          <span class="stat-label">Precisión</span>
+        </div>
+      </div>
+      <div class="game-over-achievements" id="go-achievements"></div>
+      <div class="game-over-buttons">
+        <button class="btn btn-primary" data-page="game-setup">🔄 Jugar otra vez</button>
+        <button class="btn btn-secondary" data-page="home">🏠 Volver al inicio</button>
+      </div>
+    </div>
+
+    <!-- ========== RANKING ========== -->
+    <div id="page-ranking" class="page">
+      <div class="page-header">
+        <button class="back-btn" data-page="home">← Volver</button>
+        <h2>🏆 Ranking</h2>
+        <div></div>
+      </div>
+      <div id="ranking-content">
+        <table class="ranking-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Jugador</th>
+              <th>Puntos</th>
+              <th>Categoría</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody id="ranking-body"></tbody>
+        </table>
+        <div class="ranking-empty" id="ranking-empty">Aún no hay partidas registradas</div>
+      </div>
+      <div class="ranking-actions">
+        <button class="btn btn-danger btn-small" id="btn-clear-ranking">🗑️ Borrar Ranking</button>
+      </div>
+    </div>
+
+    <!-- ========== ACHIEVEMENTS ========== -->
+    <div id="page-achievements" class="page">
+      <div class="page-header">
+        <button class="back-btn" data-page="home">← Volver</button>
+        <h2>⭐ Logros</h2>
+        <div></div>
+      </div>
+      <div class="achievements-grid" id="achievements-grid">
+        <!-- Injected by JS -->
+      </div>
+    </div>
+
+    <!-- ========== SETTINGS ========== -->
+    <div id="page-settings" class="page">
+      <div class="page-header">
+        <button class="back-btn" data-page="home">← Volver</button>
+        <h2>⚙️ Configuración</h2>
+        <div></div>
+      </div>
+      <div class="settings-section">
+        <h3>Preferencias</h3>
+        <div class="settings-row">
+          <span class="setting-label">🔊 Sonido</span>
+          <div class="toggle-switch active" id="toggle-sound"></div>
+        </div>
+      </div>
+      <div class="settings-section">
+        <h3>Datos</h3>
+        <div class="settings-row">
+          <span class="setting-label">🗑️ Borrar todos los datos</span>
+          <button class="btn btn-danger btn-small" id="btn-reset-data">Borrar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== STATS ========== -->
+    <div id="page-stats" class="page">
+      <div class="page-header">
+        <button class="back-btn" data-page="home">← Volver</button>
+        <h2>📊 Estadísticas</h2>
+        <div></div>
+      </div>
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card">
+          <span class="stat-icon">🎮</span>
+          <span class="stat-number" id="stat-games">0</span>
+          <span class="stat-name">Partidas</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">✅</span>
+          <span class="stat-number" id="stat-correct">0</span>
+          <span class="stat-name">Correctas</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">❌</span>
+          <span class="stat-number" id="stat-incorrect">0</span>
+          <span class="stat-name">Incorrectas</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">🎯</span>
+          <span class="stat-number" id="stat-accuracy">0%</span>
+          <span class="stat-name">Precisión</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">🏆</span>
+          <span class="stat-number" id="stat-best-score">0</span>
+          <span class="stat-name">Mejor Puntaje</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-icon">🪙</span>
+          <span class="stat-number" id="stat-coins">0</span>
+          <span class="stat-name">Monedas</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========== MODALS ========== -->
+
+  <!-- 50/50 Modal -->
+  <div class="modal-overlay" id="modal-5050">
+    <div class="modal-content">
+      <h3>✂️ 50/50</h3>
+      <p style="color:var(--text-secondary);margin:12px 0;">Se han eliminado 2 respuestas incorrectas.</p>
+      <button class="btn btn-primary" id="modal-5050-close">Entendido</button>
+    </div>
+  </div>
+
+  <!-- Hint Modal -->
+  <div class="modal-overlay" id="modal-hint">
+    <div class="modal-content">
+      <h3>💡 Pista</h3>
+      <div class="hint-display">
+        <div class="hint-first-letter" id="hint-first-letter">—</div>
+        <div class="hint-letter-count" id="hint-letter-count">—</div>
+      </div>
+      <button class="btn btn-primary" id="modal-hint-close">Entendido</button>
+    </div>
+  </div>
+
+  <!-- Audience Modal -->
+  <div class="modal-overlay" id="modal-audience">
+    <div class="modal-content">
+      <h3>👥 Consulta al Público</h3>
+      <div class="audience-bar" id="audience-bars">
+        <!-- Injected by JS -->
+      </div>
+      <button class="btn btn-primary" id="modal-audience-close">Entendido</button>
+    </div>
+  </div>
+
+  <!-- Achievement Unlocked Modal -->
+  <div class="modal-overlay" id="modal-achievement">
+    <div class="modal-content">
+      <div style="font-size:4rem;margin-bottom:8px;" id="ach-modal-icon">🏆</div>
+      <h3>¡Logro Desbloqueado!</h3>
+      <p style="color:var(--text-secondary);margin:12px 0;font-size:1.2rem;font-weight:700;" id="ach-modal-name">Nombre</p>
+      <p style="color:var(--text-muted);font-size:0.85rem;" id="ach-modal-desc">Descripción</p>
+      <button class="btn btn-primary" style="margin-top:16px;" id="modal-ach-close">¡Genial!</button>
+    </div>
+  </div>
+
+  <!-- Coins Insufficient Modal -->
+  <div class="modal-overlay" id="modal-insufficient">
+    <div class="modal-content">
+      <h3>🪙 Monedas insuficientes</h3>
+      <p style="color:var(--text-secondary);margin:12px 0;" id="modal-insufficient-msg">Necesitas más monedas para usar esta ayuda.</p>
+      <button class="btn btn-primary" id="modal-insufficient-close">Entendido</button>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
